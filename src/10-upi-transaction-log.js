@@ -47,5 +47,85 @@
  *   //      frequentContact: "Swiggy", allAbove100: false, hasLargeTransaction: true }
  */
 export function analyzeUPITransactions(transactions) {
-  // Your code here
+  // constraints
+  if (!Array.isArray(transactions) || transactions.length === 0) {
+    return null;
+  }
+
+  // validations
+  const validTransactions = transactions.filter((item) => {
+    const isValidAmount = Number.isFinite(item.amount) && item.amount > 0;
+    const isValidType = item.type === "credit" || item.type === "debit";
+    return isValidAmount && isValidType;
+  });
+
+  if (validTransactions.length === 0) {
+    return null;
+  }
+
+  // core
+  const totalCredit = validTransactions
+    .filter((item) => item.type === "credit")
+    .map((txn) => txn.amount)
+    .reduce((acc, val) => acc + val, 0);
+
+  const totalDebit = validTransactions
+    .filter((item) => item.type === "debit")
+    .map((txn) => txn.amount)
+    .reduce((acc, val) => acc + val, 0);
+
+  const netBalance = totalCredit - totalDebit;
+
+  const transactionCount = validTransactions.length;
+
+  const sumOfAllAmounts = validTransactions
+    .map((txn) => txn.amount)
+    .reduce((acc, val) => acc + val, 0);
+
+  const avgTransaction = Math.round(sumOfAllAmounts / transactionCount);
+
+  const highestTransaction = validTransactions.reduce((prev, current) => {
+    return prev.amount > current.amount ? prev : current;
+  }, validTransactions[0]);
+
+  const categoryBreakdown = validTransactions.reduce((acc, currentTxn) => {
+    const category = currentTxn.category;
+    const amount = currentTxn.amount;
+    acc[category] = (acc[category] || 0) + amount;
+    return acc;
+  }, {});
+
+  const frequentContacts = validTransactions.reduce((acc, currentTxn) => {
+    const givenTo = currentTxn.to;
+    acc[givenTo] = (acc[givenTo] || 0) + 1;
+    return acc;
+  }, {});
+
+  let frequentContact = "";
+  if (Object.keys(frequentContacts).length > 0) {
+    const maxFreq = Math.max(...Object.values(frequentContacts));
+    const mostFrequentEntry = Object.entries(frequentContacts).find(
+      ([, freq]) => freq === maxFreq,
+    );
+    frequentContact = mostFrequentEntry[0];
+  }
+
+  const allAbove100 = validTransactions.every((item) => item.amount > 100);
+
+  const hasLargeTransaction = validTransactions.some(
+    (item) => item.amount >= 5000,
+  );
+
+  return {
+    totalCredit,
+    totalDebit,
+    netBalance,
+    transactionCount,
+    avgTransaction,
+    highestTransaction,
+    categoryBreakdown,
+    frequentContact,
+    allAbove100,
+    hasLargeTransaction,
+  };
 }

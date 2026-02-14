@@ -38,6 +38,52 @@
  *   // => { date: "01/12/2024", time: "09:15", sender: "Priya",
  *   //      text: "I love this song", wordCount: 4, sentiment: "love" }
  */
+
 export function parseWhatsAppMessage(message) {
-  // Your code here
+  // constraint
+  if (typeof message !== "string") return null;
+
+  // validations
+  const dashIndex = message.indexOf(" - ");
+  if (dashIndex === -1) return null;
+
+  const colonSpaceIndex = message.indexOf(": ", dashIndex);
+  if (colonSpaceIndex === -1) return null;
+
+  const splitStr = message.split("- ")[1];
+  const loveKeywords = ["❤", "love", "pyaar"];
+  const funnyKeywords = ["😂", ":)", "haha"];
+
+  const date = message.slice(0, 10);
+  const time = message.split(", ")[1].slice(0, 5);
+  const sender = splitStr.slice(0, splitStr.indexOf(":"));
+  const extMessage = message.split(" - ")[1].split(": ")[1].trim();
+  const wordLength = (extMessage.match(/\b\w+\b/g) || []).length;
+
+  let sentiment = "neutral";
+
+  const lowerCaseMessage = message.toLowerCase();
+
+  if (
+    funnyKeywords.some((keyword) =>
+      lowerCaseMessage.includes(keyword.toLowerCase()),
+    )
+  ) {
+    sentiment = "funny";
+  } else if (
+    loveKeywords.some((keyword) =>
+      lowerCaseMessage.includes(keyword.toLowerCase()),
+    )
+  ) {
+    sentiment = "love";
+  }
+
+  return {
+    date,
+    time,
+    sender,
+    text: extMessage,
+    wordCount: wordLength,
+    sentiment,
+  };
 }

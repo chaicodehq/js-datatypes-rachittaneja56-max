@@ -39,5 +39,64 @@
  *   // => { baseAmount: 500, gstRate: 0, gstAmount: 0, totalAmount: 500 }
  */
 export function calculateGST(amount, category) {
-  // Your code here
+  if (typeof(category) !== "string"){
+     return null
+  }
+  if (!Number.isFinite(amount) || isNaN(amount) || amount <=0) {
+    return null
+  }
+  let comparisoin = category.toLowerCase()
+  let baseAmount = amount;
+  let gstRate;
+  let totalAmount;
+  let gstAmount;
+  switch (comparisoin) {
+    case "essential":
+      gstRate = 0
+      gstAmount = baseAmount * gstRate / 100
+      totalAmount = baseAmount + gstAmount
+      return {
+         baseAmount,
+         gstRate, 
+         "gstAmount": parseFloat(gstAmount.toFixed(2)), 
+         "totalAmount":parseFloat(totalAmount.toFixed(2)) }
+    case "food":
+      gstRate = 5
+      gstAmount = baseAmount * gstRate / 100
+      totalAmount = baseAmount + gstAmount
+      return {
+         baseAmount,
+         gstRate, 
+         "gstAmount": parseFloat(gstAmount.toFixed(2)), 
+         "totalAmount":parseFloat(totalAmount.toFixed(2)) }
+    case "standard":
+      gstRate = 12
+      gstAmount = baseAmount * gstRate / 100
+      totalAmount = baseAmount + gstAmount
+      return {
+         baseAmount,
+         gstRate, 
+         "gstAmount": parseFloat(gstAmount.toFixed(2)), 
+         "totalAmount":parseFloat(totalAmount.toFixed(2)) }
+    case "electronics":
+      gstRate = 18
+      gstAmount = baseAmount * gstRate / 100
+      totalAmount = baseAmount + gstAmount
+      return {
+         baseAmount,
+         gstRate, 
+         "gstAmount": parseFloat(gstAmount.toFixed(2)), 
+         "totalAmount":parseFloat(totalAmount.toFixed(2)) }
+    case "luxury":
+      gstRate = 28
+      gstAmount = baseAmount * gstRate / 100
+      totalAmount = baseAmount + gstAmount
+      return {
+         baseAmount,
+         gstRate, 
+         "gstAmount": parseFloat(gstAmount.toFixed(2)), 
+         "totalAmount":parseFloat(totalAmount.toFixed(2)) }
+    default:
+      return null
+   }
 }
